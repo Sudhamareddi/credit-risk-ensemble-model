@@ -1,96 +1,146 @@
-Exploratory Data Analysis — Home Credit Default Risk
+ Quantitative Explainable Ensemble Model for Credit Risk Prediction
 
-This project focuses on Explatory Data Analysis (EDA) of the Home Credit Default Risk dataset from Kaggle. The objective is to understand the underlying data patterns, identify key factors influencing loan default, and prepare insights that can guide feature engineering and model building.
+![Python](https://img.shields.io/badge/Python-3.10-blue)
+![XGBoost](https://img.shields.io/badge/XGBoost-optimized-orange)
+![SHAP](https://img.shields.io/badge/Explainability-SHAP%20%7C%20LIME-green)
+![Status](https://img.shields.io/badge/Status-Complete-brightgreen)
+![Dataset](https://img.shields.io/badge/Dataset-Home%20Credit%20Kaggle-blue)
 
-Financial institutions often struggle with assessing credit risk due to limited or noisy data. Through this EDA, we aim to uncover meaningful relationships between customer attributes and repayment behavior.
+ Project Overview
 
-Objectives
-Understand the structure and distribution of the dataset
-Identify missing values and data quality issues
-Analyze relationships between features and target variable (TARGET)
-Detect patterns, trends, and anomalies in borrower behavior
-Generate insights useful for downstream machine learning models
-Dataset Description
+A full end-to-end machine learning pipeline for credit risk prediction
+using ensemble models, model explainability, and bias & stability
+analysis — aligned with quantitative validation standards used in
+real-world financial institutions.
 
-The dataset is sourced from Kaggle’s Home Credit Default Risk competition.
+ Objectives
 
-Key Features:
-TARGET: Binary variable (1 = default, 0 = repaid)
-Demographics: Age, gender, family status
-Financial Info: Income, credit amount, annuity
-Employment: Employment duration, occupation
-External Scores: Risk scores from external sources
+- Build ensemble classification models for financial default prediction
+- Evaluate models using industry-standard metrics
+- Apply SHAP & LIME for model interpretability
+- Perform bias and stability analysis across demographic groups
+- Build an automated ML pipeline for reproducibility
 
-Tools & Libraries Used
-Python 
-Pandas
-NumPy
-Matplotlib
-Seaborn
+ Dataset
+
+- **Source:** [Kaggle — Home Credit Default Risk](https://www.kaggle.com/competitions/home-credit-default-risk)
+- **Size:** 307,511 applicants × 122 features
+- **Target:** Binary (1 = Default, 0 = Repaid)
+- **Class Imbalance:** ~92% repaid, ~8% defaulted
+
+Project StructureExploratory Data Analysis — Home Credit Default Risk
+credit-risk-ensemble-model/
+│
+├── notebooks/
+│   ├── 1_EDA.ipynb
+│   ├── 2_Preprocessing.ipynb
+│   ├── 3_Model_Training.ipynb
+│   ├── 4_Explainability.ipynb
+│   ├── 5_Bias_Stability.ipynb
+│   └── 6_Automated_Pipeline.ipynb
+│ README.nd
+
+---
+
+## Pipeline Stages
+
+1. Exploratory Data Analysis
+- Distribution analysis of 122 features
+- Missing value analysis
+- Class imbalance visualization
+- Correlation heatmap
+- Borrower behavior pattern analysis
+
+2. Preprocessing
+- Median imputation for numerical features
+- Mode imputation for categorical features
+- Label encoding for categorical variables
+- Feature engineering:
+  - Age in years
+  - Employment years
+  - Credit to income ratio
+  - Annuity to income ratio
+- Standard scaling
+
+3. Model Training
+- Logistic Regression (baseline)
+- Random Forest (balanced class weights)
+- XGBoost (scale_pos_weight for imbalance)
+- Ensemble (average of all three)
+
+4. Explainability
+- SHAP TreeExplainer for global feature importance
+- SHAP Waterfall plot for individual predictions
+- LIME for local model interpretability
+- Cross-method validation between SHAP & LIME
+
+5. Bias & Stability Analysis
+- Gender bias analysis
+- Age group bias analysis
+- KS Stability test
+- 5-Fold Cross Validation stability check
+
+6. Automated Pipeline
+- End-to-end pipeline with config-driven settings
+- Automated reporting
+
+Results
+
+Model Performance
+
+| Model | ROC-AUC | F1 Score |
+|---|---|---|
+| Logistic Regression | 0.7469 | 0.2596 |
+| Random Forest | 0.7371 | 0.2602 |
+| **XGBoost** | **0.7577** | **0.2726** |
+| Ensemble | 0.7563 | — |
+
+Stability
+| Metric | Value | Status |
+|---|---|---|
+| KS Statistic | 0.3832 | GOOD |
+| CV Mean AUC | 0.7426 | Stable |
+| CV Std Dev | 0.0044 | Very Stable  |
+
+### Top Risk Predictors (SHAP)
+
+| Feature | SHAP Importance | Meaning |
+|---|---|---|
+| EXT_SOURCE_3 | 0.3865 | External risk score |
+| EXT_SOURCE_2 | 0.3479 | External risk score |
+| AMT_GOODS_PRICE | 0.1676 | Goods price amount |
+
+> SHAP & LIME both identify EXT_SOURCE_3 as the #1 predictor
+> — cross method validation confirmed 
+
+Known Limitations
+
+- Model overpredicts defaults due to class imbalance
+- Gender & age bias detected — requires monitoring
+- External scores dominate predictions — limited
+  interpretability beyond top features
+
+Libraries Used
+
+| Library | Purpose |
+
+| Pandas, NumPy | Data manipulation |
+| Scikit-learn | Preprocessing & modeling |
+| XGBoost | Gradient boosting |
+| SHAP | Global explainability |
+| LIME | Local explainability |
+| Matplotlib, Seaborn | Visualization |
+| SciPy | KS statistical test |
+
+How to Run
+
+1. Open [Kaggle](https://kaggle.com) and join the
+   Home Credit Default Risk competition
+2. Run notebooks **in order** as mentioned in project structure
+3. Each notebook saves outputs used by the next
 
 
-EDA Workflow
-1. Data Loading & Inspection
-Loaded dataset using Pandas
-Checked shape, column types, and basic statistics
-Identified numerical and categorical features
-2. Missing Value Analysis
-Calculated percentage of missing values per column
-Visualized missing data distribution
-Observed that several features have high missingness (common in financial datasets)
-3. Target Variable Analysis
-Analyzed class imbalance in TARGET
-Observed that:
-Majority of applicants repay loans
-Minority class represents defaults → imbalanced dataset
-4. Univariate Analysis
-Distribution plots for:
-Income
-Credit amount
-Age
-Identified skewness and outliers in financial variables
-5. Bivariate Analysis
-Compared features against TARGET
-Key observations:
-Lower income groups show higher default probability
-Higher credit amounts correlate with risk in certain segments
-External risk scores strongly influence repayment behavior
-6. Categorical Feature Analysis
-Analyzed:
-Gender vs default
-Occupation vs default
-Family status vs default
-Used count plots and bar charts for comparison
-7. Correlation Analysis
-Generated correlation heatmap
-Identified features with strong positive/negative correlation with TARGET
-Helped shortlist important variables for modeling
-8. Outlier Detection
-Used boxplots to detect extreme values
-Observed significant outliers in income and credit-related fields
 
-Key Insights
-Dataset is highly imbalanced, requiring special handling in modeling
-External risk scores are strong predictors of default
-Income and employment stability significantly influence repayment
-Certain demographic groups show higher default tendencies
-Missing values are substantial and must be handled carefully
-
-Challenges
-High number of missing values
-Imbalanced target variable
-Presence of outliers
-Large dataset size impacting performance
-
-Next Steps
-Handle missing values (imputation strategies)
-Perform feature engineering
-Apply scaling/encoding techniques
-Train machine learning models:
-Logistic Regression
-Random Forest
-XGBoost / LightGBM
-Evaluate using metrics like:
-ROC-AUC
-Precision-Recall
-F1-score
+**G.Sudhama**
+[GitHub](https://github.com/Sudhamareddi) |
+[LinkedIn](www.linkedin.com/in/sudhama-g)
